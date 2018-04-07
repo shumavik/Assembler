@@ -33,21 +33,21 @@ RequestA DB "Input matrix 5x5=25: ",0AH,0DH,0
            i sword 1   
            j sword 1
     
-;ResTrue DB 13,10,'Find:m-5',13,10,0
-;ResFalse DB 131,10,'Find:m+a/2',13,10,0
- 
+
+Per    DB 13,10,0
 Result DB 'summa = '
+Pusto  DB ' '
 ResStr DB 16 DUP (' '),0
+ResStrOut DB 5 DUP (' '),0
+OutMatrix DB 'Output the matrix',13,10,0
 
 
          .DATA?
-;Buffer DB 10 DUP (?)
 inbuf    DB    100 DUP (?)
-;a       sWord      ?
-;m       sword      ?
-;b       sword      ?
 sum     sword    ?
 res     sword    ?
+resOut  sword    ?
+help    sword    ?
 InOutBuf       DB    100 DUP (?) ; Буфер ввода / вывода
           current sword ?
          .CODE
@@ -83,7 +83,9 @@ Start:
           mov EBX,0    ;в EBX лежит смещение относительно базы
           
           mov ECX,5   ;ECX количество столбцов          
-          cycle1: push ECX
+          cycle1:       
+                        
+                        push ECX
                         mov ECX,5
           cycle2:
                     
@@ -124,16 +126,46 @@ Start:
                     pop ECX
                     sub j,5 ;j:=j-5=N+1-5 В j снова 1
                     inc i
+
                     loop cycle1              
                  
 
          XOR    EAX,EAX
          ;Вывод матрицы
+           
+          Invoke StdOut, ADDR OutMatrix  
+            
+          mov EBX,0    ;в EBX лежит смещение относительно базы
+          mov ECX,5   ;ECX количество столбцов          
+          cycleOutput1: 
+                        push ECX
+                        mov ECX,5
+          cycleOutput2:
+                        mov AX,A[EBX*2]          
+                        mov help,AX
+                        
+                        push ECX
+                        Invoke dwtoa,help, ADDR ResStrOut
+                        Invoke StdOut, ADDR ResStrOut
+                        Invoke StdOut, ADDR Pusto
+                        pop ECX
+                        
+                        
+                        
+                          
+                   inc EBX 
+                   loop cycleOutput2 
+                    pop ECX
+                    
+                    push ECX
+                    invoke StdOut, ADDR Per
+                    pop ECX
+                    
+                    loop cycleOutput1              
+         XOR    EAX,EAX
+         invoke StdOut, ADDR Per
          
-          
-         
-         
-         Invoke dwtoa,res,ADDR ResStr
+         Invoke dwtoa,res, ADDR ResStr
          Invoke StdOut,ADDR Result 
          
          Invoke StdOut,ADDR MsgExit
