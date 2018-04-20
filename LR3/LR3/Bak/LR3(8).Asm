@@ -53,7 +53,7 @@ Start:
         
             jge metka
                
-              ; mov CX,AX; CX:=m
+               mov CX,AX; CX:=m
                
               ; XOR EAX,EAX
                

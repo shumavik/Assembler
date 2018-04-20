@@ -39,8 +39,7 @@ Result DB 'summa = '
 Pusto  DB ' '
 ResStr DB 16 DUP (' '),0
 ResStrOut DB 5 DUP (' '),0
-ResMatrix DB 16 DUP (' '),0
-check     DB 'OK!'
+OutMatrix DB 'Output the matrix',13,10,0
 
 
          .DATA?
@@ -149,8 +148,8 @@ Start:
                         Invoke StdOut, ADDR Pusto
                         pop ECX
                         
-                        ;Invoke dwtoa,help, ADDR ResStr
-                        ; Invoke StdOut,ADDR check
+                        
+                        
                           
                    inc EBX 
                    loop cycleOutput2 
@@ -159,10 +158,6 @@ Start:
                     push ECX
                     invoke StdOut, ADDR Per
                     pop ECX
-                    
-                    ;push ECX
-                    ;Invoke StdOut,ADDR check
-                    ;pop ECX
                     
                     loop cycleOutput1              
          XOR    EAX,EAX

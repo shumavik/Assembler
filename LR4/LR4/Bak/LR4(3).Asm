@@ -43,8 +43,8 @@ OutMatrix DB 'Output the matrix',13,10,0
          .DATA?
 inbuf    DB    100 DUP (?)
 ;sum     sword    ?              
-res     sword    ?
-resOut  sword    ?
+res     sword    ?              ;Переменная для хранения результата
+;resOut  sword    ?              
 help    sword    ?
 InOutBuf       DB    100 DUP (?) ; Буфер ввода / вывода
           current sword ?

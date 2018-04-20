@@ -63,8 +63,8 @@ Start:
                cwd
                idiv sword PTR BX  ; AX:=a/2     
                
-               ;add CX,AX; CX:=m+a/2     
-               ;mov b,CX             
+               add CX,AX; CX:=m+a/2     
+               mov b,CX             
              Invoke  StdOut,ADDR ResFalse
                
                jmp konec             

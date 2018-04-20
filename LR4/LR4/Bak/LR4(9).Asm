@@ -35,7 +35,7 @@ RequestA DB "Input matrix 5x5=25: ",0AH,0DH,0
     
 
 Per    DB 13,10,0
-;Result DB 'summa = '
+Result DB 'summa = '
 Pusto  DB ' '
 ResStr DB 16 DUP (' '),0
 ResStrOut DB 5 DUP (' '),0

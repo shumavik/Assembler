@@ -52,16 +52,17 @@ Start:
         cmp AX,a ;Начало ветвления
         
             jge metka
-               mov CX,AX; CX:=m
                
-               XOR EAX,EAX
+              ; mov CX,AX; CX:=m
                
-               mov AX,a  ; AX:=a
-               mov BX,2
-               idiv BX  ; AX:=a/2     
+              ; XOR EAX,EAX
                
-               add CX,AX; CX:=m+a/2     
-               mov b,CX             
+               ;mov AX,a  ; AX:=a
+               ;mov BX,2
+               ;idiv BX  ; AX:=a/2     
+               
+               ;add CX,AX; CX:=m+a/2     
+               ;mov b,CX             
              Invoke  StdOut,ADDR ResFalse
                
                jmp konec             
