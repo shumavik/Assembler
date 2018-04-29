@@ -132,7 +132,9 @@ Start:
 
          XOR    EAX,EAX
          ;Вывод матрицы
-         
+           
+          Invoke StdOut, ADDR OutMatrix  
+            
           mov EBX,0    ;в EBX лежит смещение относительно базы
           mov ECX,5   ;ECX количество столбцов          
           cycleOutput1: 

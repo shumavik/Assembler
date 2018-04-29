@@ -55,7 +55,7 @@ Start:
                
                mov CX,AX; CX:=m
                
-              ; XOR EAX,EAX
+               XOR EAX,EAX
                
                ;mov AX,a  ; AX:=a
                ;mov BX,2

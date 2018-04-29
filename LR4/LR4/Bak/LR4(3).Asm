@@ -45,7 +45,7 @@ inbuf    DB    100 DUP (?)
 ;sum     sword    ?              
 res     sword    ?              ;Переменная для хранения результата
 ;resOut  sword    ?              
-help    sword    ?
+help    sword    ?              ; Переменная для 
 InOutBuf       DB    100 DUP (?) ; Буфер ввода / вывода
           current sword ?
          .CODE
@@ -143,7 +143,7 @@ Start:
                         mov help,AX
                         
                         push ECX
-                        Invoke dwtoa,help, ADDR ResStrOut
+                        Invoke dwtoa,A[EBX*2], ADDR ResStrOut
                         Invoke StdOut, ADDR ResStrOut
                         Invoke StdOut, ADDR Pusto
                         pop ECX

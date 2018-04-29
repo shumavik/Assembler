@@ -79,7 +79,7 @@ Start:
 
 
 
- konec:  Invoke dwtoa,b,ADDR ResStr
+ konec:  ;Invoke dwtoa,b,ADDR ResStr
          Invoke StdOut,ADDR Result   
             
             

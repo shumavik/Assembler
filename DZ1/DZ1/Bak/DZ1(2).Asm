@@ -10,128 +10,74 @@ IncludeLib kernel32.lib
 IncludeLib masm32.lib
 
          .CONST
-MsgExit   DB    13,10,"Press Enter to Exit",0AH,0DH,0
-Enter_Msg DB    "input your string",0AH,0DH,0
+MsgExit   DB     13,10,"Press Enter to Exit",0AH,0DH,0
+Enter_Msg DB    "Your string",0AH,0DH,0                 
+mystr     DB    "qqqonehe zdesskto nibudyes noosleep ",0  ; строка данная по условию
+res       DB     0AH,0DH,'Chislo razlichnix slov ',0AH,0DH,0  
          .DATA
-buffer     DB    8 dup(?)
-Str_Enter  DB    38 dup(?) ;буфер для ввода строки
-Result     DD    37 dup(?)
-Res_Str    DB    16 dup(?) ;буфер для вывода результата
-no         DB    "no"
-yes        DB    "yes"
 Perenos     DB    13,10
          .DATA?
 inbuf    DB    100 DUP (?)
-kol      dword   ?
+rezstr   db      0AH,0DH,22 DUP (' '),0AH,0DH,0
+kol           sword   ?
+letters       sword    ?   ; Количество различных букв в слове
+help          sdword    ?   ; Переменная для перехода к оставшимся в слове буквам, смещение по буквам в слове
          .CODE
 Start:
          
-         cld
-         mov ECX,0
+         Invoke StdOut,ADDR Enter_Msg
+         Invoke StdOut,ADDR mystr
+         Invoke StdOut,ADDR Perenos  ; Для лучшего вывода
          
-         Invoke StdOut,ADDR Enter_Msg 
-         Invoke StdIn, ADDR Str_Enter,LengthOf Str_Enter
-         Invoke StripLF,ADDR Str_Enter
+         lea EDI,[mystr-1]  ; в EDI работа со строкой
+         lea ESI,[mystr-1]  ; в ESI хранится строка
          
-         lea EDI,Str_Enter
-         mov ECX,38
-         mov AL,0
-         XOR EBX,EBX
-         
-         
-         ;repne scasb            ; поиск конца строки
-         
-         ;mov AX,38              ; в AX размер буфера
-         ;sub AX,CX              ; в AX размер строки + 1
-         ;mov CX,AX              
-         ;dec CX                 ; в CX длина строки
-                 
-         ;lea EDI,Str_Enter      ; адрес строки
-         ;mov AL,' '             ; через AL идет сравнение с пробелом 
-         ;mov EBX,0              ; количество слов
-         ;cld
-         
-         ;cycle1: cmp CX,0       ; Нашли конец строки
-          ;       je kon         ; переходим в конец
-           ;      mov DX,0       ; считаем количество символов в слове
-         
-         ;cycle2: scasb          ; поиск пробела
-          ;       je consl       ; 
-           ;      
-            ;     inc DX         ; увеличиваем буквы
-             ;    dec CX         ; уменьшаем длину строки
-              ;   jmp cycle2     ; переходим на поиск пробела 
-                                ; в DX длина слова
-                                ; в CX количество оставшихся в строке символов 
-         ;consl:  cmp DX,8       ; слово из 8 букв?
-          ;       jg prod       ; если букв > 8
-           ;      inc BX         
+         mov EBX,4 ; количество слов в строке
+         cld       ; сброс флага DF-обработка от начала к концу строки
+
+  cycle1:   cmp BX,0  ; конец слов?
+                je conec  ; все слова обработали, переход на конец
+            dec BX      ; уменьшаем количество слов
+            mov DX,8    ; количество букв в слове в DX
+            mov letters,8 ; в переменную letter количество различных букв в слове, полагаем что они все разные
+            ; если не разные то будем вычитать из letters
+            mov help,0    ; начальное смещение по буквам в слове
+            add edi,1     ; сдвигаем строку на символ вперед
+            add esi,1     ; сдвигаем строку на символ вперед
+
+            cycle2:
+                      cmp DX,0 ; остались ли буквы в слове? 
+                      je vivod     ; переход по viv, если не осталось букв в слове
+                      mov EDI,ESI ; восстанавливаем в EDI строку для пробега по оставшимся буквам
+                      dec DX     ; уменьшаем количество оставшихся букв в слове
+                      lodsb      ; извлекаем из ESI символ и заносим в регистр A0L для дальнейшего поиска
+                      mov ECX,7   ; в ECX количество оставшихся букв
+                      sub ECX,help ; Вычитаем из CX "пройденные буквы"
+                      add EDI,1   ; смещаем EDI на 1 символ
+                     cycle: cmp ECX,0  ; остались ли буквы после вычитания "пройденных букв"
+                      je cycle3        ; если букв не осталось переход по cycle3
+                      repne  scasb     ; ищем символ в EDI=AL, если не нашли то в ECX 0
+                        je equal       ; символы одинаковы
+                         jmp cycle     ; если нет символов то переход в начало, нашли 
+                     equal: dec letters  ; уменьшаем количество различных букв в текущем слове
+                    cycle3: add help,1   ; увеличиваем смещение букв
+                       jmp cycle2
             
-         ;prod:   dec CX         ; уменьшаем на 1 из-за пробела между словами
-          ;       jmp cycle1     ; переходим на начало поиска конца строки и слов
-         
-         
-         
-         
-         
-         
-         
-         lea EDI,Str_Enter      ; адрес строки
-         mov AL,' '             ; через AL идет сравнение с пробелом 
-         mov EBX,0              ; количество слов
-         cld
-         
-         cycle1: cmp CX,0       ; Нашли конец строки
-                 je kon         ; переходим в конец
-                 mov DX,0       ; считаем количество символов в слове
-         
-         cycle2: 
-                 
-                 scasb          ; поиск пробела
-                 
-                 
-                 je consl       ; 
-                 
-                 mov buffer,EDI[38]
-                 inc DX         ; увеличиваем буквы
-                 dec CX         ; уменьшаем длину строки
-                 jmp cycle2     ; переходим на поиск пробела 
-                                ; в DX длина слова
-                                ; в CX количество оставшихся в строке символов 
-         consl:  
-                  
-                 cmp DX,8       ; слово из 8 букв?
-                 jg prod       ; если букв > 8
-                 inc BX         
             
-         prod:   dec CX         ; уменьшаем на 1 из-за пробела между словами
-                 jmp cycle1     ; переходим на начало поиска конца строки и слов
-         
-         
-         
-                        
-               
-         kon:  
-         mov kol,EBX
-                
-               
             
-         
-         
-         
-         XOR    EAX,EAX
-        
-         
-         
-         Invoke dwtoa,kol,ADDR Result      
-         Invoke StdOut,ADDR Result
-         
-         Invoke StdOut, ADDR Perenos
-         Invoke StdOut,ADDR Str_Enter
-         
+            
+              ; выводим количество разных букв в слове
+              vivod:   push ECX
+                    Invoke StdOut,ADDR res
+                    Invoke dwtoa,letters,ADDR rezstr
+                    Invoke StdOut,ADDR rezstr
+                     pop ECX
+                     
+                      jmp cycle1
+      
+  conec: XOR    EAX,EAX
          Invoke StdOut,ADDR MsgExit
          Invoke StdIn,ADDR inbuf,LengthOf inbuf		
 	
          Invoke ExitProcess,0
          End    Start
-

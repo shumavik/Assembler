@@ -169,7 +169,7 @@ Start:
          invoke StdOut, ADDR Per
          
          Invoke dwtoa,res, ADDR ResStr
-;         Invoke StdOut,ADDR Result 
+         Invoke StdOut,ADDR Result 
          
          Invoke StdOut,ADDR MsgExit
          Invoke StdIn,ADDR inbuf,LengthOf inbuf		

@@ -17,7 +17,7 @@ Zapros DB 13,10,'Input a',13,10,0
 Zapros2 DB 13,10,'Input m',13,10,0
 
 ResTrue DB 13,10,'Find:m-5',13,10,0
-ResFalse DB 131,10,'Find:m+a/2',13,10,0
+ResFalse DB 13,10,'Find:m+a/2',13,10,0
  
 Result DB 'b = '
 ResStr DB 16 DUP (' '),0

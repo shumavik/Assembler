@@ -65,7 +65,7 @@ Start:
                
                add CX,AX; CX:=m+a/2     
                mov b,CX             
-             Invoke  StdOut,ADDR ResFalse
+               Invoke  StdOut,ADDR ResFalse
                
                jmp konec             
                     

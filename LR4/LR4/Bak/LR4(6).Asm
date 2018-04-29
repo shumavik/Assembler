@@ -21,10 +21,8 @@ RequestA DB "Input matrix 5x5=25: ",0AH,0DH,0
     
     ;    NxN 
     ;   i<=N-j+i 
-    ;
-    ;
-    ;
-            A sword 0,0,0,0,0
+   
+         A sword 0,0,0,0,0
               sword 0,0,0,0,0
               sword 0,0,0,0,0
               sword 0,0,0,0,0   
@@ -34,17 +32,17 @@ RequestA DB "Input matrix 5x5=25: ",0AH,0DH,0
            j sword 1
     
 
-Per    DB 13,10,0
-Result DB 'summa = '
-Pusto  DB ' '
-ResStr DB 16 DUP (' '),0
-ResStrOut DB 5 DUP (' '),0
-OutMatrix DB 'Output the matrix',13,10,0
+Per    DB 13,10,0         ; Для перехода на следующую строку при выводе матрицы
+Result DB 'summa = '      ; Заготовка для вывода результата
+Pusto  DB ' '             ; Пробел для разделения столбцов при выводе матрицы
+ResStr DB 16 DUP (' '),0                   ; Помещаем значение переменной для вывода результата
+ResStrOut DB 5 DUP (' '),0                 ; Помещаем значение переменной для вывода матрицы 
+OutMatrix DB 'Output the matrix',13,10,0    
 
 
          .DATA?
 inbuf    DB    100 DUP (?)
-sum     sword    ?
+жsum     sword    ?              
 res     sword    ?
 resOut  sword    ?
 help    sword    ?

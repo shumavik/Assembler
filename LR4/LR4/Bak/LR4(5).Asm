@@ -42,7 +42,7 @@ OutMatrix DB 'Output the matrix',13,10,0
 
          .DATA?
 inbuf    DB    100 DUP (?)
-æsum     sword    ?              
+;sum     sword    ?              
 res     sword    ?
 resOut  sword    ?
 help    sword    ?

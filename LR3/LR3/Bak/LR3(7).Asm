@@ -57,8 +57,8 @@ Start:
                
                XOR EAX,EAX
                
-               ;mov AX,a  ; AX:=a
-               ;mov BX,2
+               mov AX,a  ; AX:=a
+               mov BX,2
                ;idiv BX  ; AX:=a/2     
                
                ;add CX,AX; CX:=m+a/2     
