@@ -1,0 +1,241 @@
+Microsoft (R) Macro Assembler Version 6.14.8444		    05/24/18 13:19:11
+C:\Users\artur\Desktop\учеба\МЗЯ\LR5\LR5\LR5.Asm	     Page 1 - 1
+
+
+				         .586
+				         .MODEL  flat
+				         
+ 00000000			         .DATA
+ 00000000 00000000		         i     dword 0          ; общее смещение
+ 00000004 00000000		         position dword 0       ; смещение на начало нового слова 
+ 00000008 00000000		         current dword 0
+ 0000000C 61 65 69 6F 75	         glasn DB "aeiouy"      ; строка с гласными
+	   79
+ 00000000			         .CODE
+						 RESULT  proto c str2:ptr byte;Прототип внешней процедуры вывода результата         
+				    public  _GLASDEL;Объявление внутреннего имени процедуры
+ 00000000			_GLASDEL proc
+					  ;начало пролога
+ 00000000  55			        PUSH EBP
+ 00000001  8B EC		        MOV  EBP,ESP
+ 00000003  53			        PUSH EBX
+ 00000004  57			        PUSH EDI
+ 00000005  56			        PUSH ESI
+				        ;конец пролога
+				      
+				        
+				        
+ 00000006  8B 7D 08		        MOV EDI,[EBP+8]    ;загружаем адрес строки в edi
+ 00000009  8B 75 0C		        MOV ESI,[EBP+12]    ;загружаем адрес массива с номерами нужных слов
+ 0000000C  8B 4D 10		        MOV ECX,[EBP+16]   ; загружаем длину строки
+ 0000000F  BB 00000000		        MOV EBX,0       ;обнуляем счетчик номера слова
+ 00000014  BA 00000000		        MOV EDX,0       ;обнуляем счетчик текущей длины слова
+ 00000019  C7 05 00000004 R	        mov position,-1  ;position всегда будет указывать на начало нового слова
+	   FFFFFFFF
+ 00000023  FC			        CLD         
+				        
+ 00000024  50			cic1:   push EAX        ; корректируем position на новое слово
+ 00000025  FF 0D 00000000 R	        dec i               ; изначально в position установиться 0
+ 0000002B  A1 00000000 R	        mov EAX,i
+ 00000030  FF 05 00000000 R	        inc i       
+ 00000036  A3 00000004 R	        mov position,EAX
+ 0000003B  FF 05 00000004 R	        inc position
+ 00000041  58			        pop EAX
+ 00000042  83 F9 00		        CMP ECX,0       ;цикл с предусловием конец строки достигнут?
+ 00000045  0F 84 000000F3	        JE  con         ;если да, переход на вывод результатов
+ 0000004B  B8 00000020		        MOV EAX,' '     ;загружаем в al пробел для поиска
+ 00000050  BA 00000000		        MOV EDX,0       ;обнуляем счетчик текущей длины слова
+ 00000055  43			        INC EBX         ;увеличиваем счетчик номера слова
+				        
+ 00000056  49			cic2:   dec ECX         ;уменьшаем счетчик оставшейся длины слова
+ 00000057  51			        push ECX
+ 00000058  8B 0D 00000000 R	        mov ECX,i
+ 0000005E  8A 04 39		        mov AL,[EDI+ECX]        ; в i записываетс текущее смещение для всей строки
+ 00000061  FF 05 00000000 R	        inc i
+ 00000067  59			        pop ECX
+ 00000068  3C 20		        cmp AL,' '           ;проверяем очередной символ на пробел
+ 0000006A  74 09		        JE  consl       ;если пробел - переходим на сравнение слова с номером
+ 0000006C  42			        INC EDX         ;если нет - увеличиваем длину слова
+ 0000006D  83 F9 00		        CMP ECX,0       ;конец строки достигнут?
+ 00000070  74 02		        JE  consl2      ;если да, проверяем последнее слово
+ 00000072  EB E2		        JMP cic2        ;переход на следующую итерацию цикла поиска пробела
+				              
+ 00000074  4A			consl2: DEC EDX;уменьшение счетчика длины слова (частный случай)                   
+ 00000075			consl:  
+ 00000075  39 1E		        CMP [ESI],EBX    ;сравниваем номер слова с номером в массиве
+ 00000077  74 02		        JE  prod         ;если одинаковы - начинаем удалять гласные
+ 00000079  EB A9		        JMP cic1
+				        
+
+
+
+ 0000007B			prod:;подготовка к удалению гласных
+ 0000007B  56			        push ESI  
+ 0000007C  53			        PUSH EBX
+ 0000007D  52			        push EDX
+ 0000007E  51			        push ECX
+				        
+ 0000007F  B9 00000000		        mov ECX,0           
+ 00000084  FF 0D 00000000 R	        dec i               ; в i смещение для конца слова
+ 0000008A  8B 15 00000004 R	        mov EDX,position      ; в EDX смещение для начала нового слова
+ 00000090  8B F7		        mov ESI,EDI             ; В ESI загружаем исходную строку 
+ 00000092  03 F2		        add ESI,EDX               ; Смещаем ESI для на начало нового слова  
+				        
+ 00000094  4A			        dec EDX                 
+				   
+ 00000095  BB 00000000		kont:   mov EBX,0               ; в EBX смещение для поиска гласной 
+ 0000009A  42			        inc EDX                     ; в строке glasn
+ 0000009B  8A 83 0000000C R	        mov AL,[glasn+EBX]       ; в AL первую гласную из строки glasn
+				        
+ 000000A1  3B 15 00000000 R	        cmp EDX,i               ; проверка на последнее слово и символ
+ 000000A7  74 5C		        je prepare              ;Если истинна то выходим из удаления
+				        
+ 000000A9			cycle1:  
+ 000000A9  3A 04 3A		        cmp AL,[EDI+EDX]        ; сравнение текущего символа с гласной
+ 000000AC  74 16		        je glas                 ; Если гласная то переходим непосредственно к удалению
+				        
+ 000000AE  3B 15 00000000 R	        cmp EDX,i               ; проверка на последнее слово и символ
+ 000000B4  74 4F		        je prepare
+				        
+ 000000B6  83 FB 05		        cmp EBX,5               ; если достигнут конец в строке glasn
+ 000000B9  74 DA		        je kont                 ; начинаем сравнения со слудующим символом в EDI
+
+				        
+
+				             
+ 000000BB  43			cycle2:   inc EBX               ; увеличиваем смещение в строке glasn
+ 000000BC  8A 83 0000000C R	repcycle: mov AL,[glasn+EBX]    ; В AL новая гласная для сравнения с текущим символом EDI
+ 000000C2  EB E5		          jmp cycle1            ; повторяем условие сравнения с гласной
+				        
+				        
+				                
+ 000000C4			glas:   
+ 000000C4  8A 04 3A		        mov AL,[EDI+EDX]      ; в AL текущий символ  
+ 000000C7  3A 83 0000000C R	        cmp AL,[glasn+EBX]     ; повторно сравниваем с гласной
+ 000000CD  74 21		        je glasafter             ; если гласная то удаляем
+ 000000CF  FF 0D 00000000 R	        dec i                       ; если конец слова то выходим
+ 000000D5  39 15 00000000 R	        cmp i,EDX
+ 000000DB  74 28		        je prepare
+				        
+				        
+ 000000DD  88 04 3A		        mov [EDI+EDX],AL        ; если не гласная оставлям символ в EDI
+ 000000E0  3B 15 00000000 R	        cmp EDX,i               ; проверка на конец слова
+ 000000E6  74 1D		        je prepare
+ 000000E8  FF 05 00000000 R	        inc i                   
+ 000000EE  EB D4		        jmp glas                ; возвращаемся на метку glas
+
+ 000000F0			glasafter:   ; удаление и проверка на подряд идущие гласные
+ 000000F0  3B 15 00000000 R	               cmp EDX,i        
+ 000000F6  74 0D		        je prepare
+ 000000F8  B0 20		             mov AL,' '
+ 000000FA  88 04 3A		             mov [EDI+EDX],AL   ; помещаем пробел вместо гласной
+ 000000FD  BB 00000000		            mov EBX,0           ; смещение на начало строки glasn
+				         
+ 00000102  42			             inc EDX            ; увеличиваем смещение для EDI
+ 00000103  EB B7		             jmp repcycle       ; повтоорно ищем следующую гласную
+				        
+ 00000105			prepare:                    
+ 00000105  8A 04 3A		         mov AL,[EDI+EDX]   
+ 00000108  3A 83 0000000C R	         cmp AL,[glasn+EBX] ; переход на последнюю замену
+ 0000010E  74 08		         je lastzam
+ 00000110  83 FB 05		         cmp EBX,5          ; если конец в строки glasn, то выходим
+ 00000113  74 08		         je final
+ 00000115  43			         inc EBX            ; переходим к следующей гласной
+ 00000116  EB ED		         jmp prepare        ; сравниваем с новой гласной
+				         
+ 00000118			lastzam: 
+ 00000118  B0 20		            mov AL,' '          ; удаляем гласную
+ 0000011A  88 04 3A		            mov [EDI+EDX],AL
+				         
+				         
+ 0000011D  59			final:   pop ECX       ; подготовка к выходу из удаления
+ 0000011E  5A			         pop EDX
+ 0000011F  5B			         pop EBX
+ 00000120  5E			         pop ESI
+ 00000121  83 C6 04		         add ESI,4      ; В ESI номер слова, в котором следует удалить гласные
+ 00000124  FF 05 00000000 R	         inc i
+ 0000012A  E9 FFFFFEF5		           jmp cic1     ; возвращаемся на поиск конца нового слова
+				        
+				        
+ 0000012F  C7 05 00000004 R	odin:  mov position,0   ; Если ввели один символ
+	   00000000
+ 00000139  E9 FFFFFF3D		       jmp prod
+				      
+
+
+ 0000013E			con:;Передача управления в С++ и эпилог
+				        
+ 0000013E  83 3D 00000004 R	        cmp position,1   ; Доп проверка на гласную 
+	   01
+ 00000145  74 E8		        je odin             ; если слово всего одно
+				        
+				        
+
+				        Invoke RESULT,[EBP+8]
+ 00000152  5E			        POP ESI
+ 00000153  5F			        POP EDI
+ 00000154  5B			        POP EBX
+ 00000155  5D			        POP EBP 
+ 00000156  C3			        ret
+ 00000157			_GLASDEL endp
+					End
+
+Microsoft (R) Macro Assembler Version 6.14.8444		    05/24/18 13:19:11
+C:\Users\artur\Desktop\учеба\МЗЯ\LR5\LR5\LR5.Asm	     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000012 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000157 Para	  Public  'CODE'	
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+RESULT . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+_GLASDEL . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000157 Public
+  cic1 . . . . . . . . . . . . .	L Near	 00000024 _TEXT	
+  cic2 . . . . . . . . . . . . .	L Near	 00000056 _TEXT	
+  consl2 . . . . . . . . . . . .	L Near	 00000074 _TEXT	
+  consl  . . . . . . . . . . . .	L Near	 00000075 _TEXT	
+  prod . . . . . . . . . . . . .	L Near	 0000007B _TEXT	
+  kont . . . . . . . . . . . . .	L Near	 00000095 _TEXT	
+  cycle1 . . . . . . . . . . . .	L Near	 000000A9 _TEXT	
+  cycle2 . . . . . . . . . . . .	L Near	 000000BB _TEXT	
+  repcycle . . . . . . . . . . .	L Near	 000000BC _TEXT	
+  glas . . . . . . . . . . . . .	L Near	 000000C4 _TEXT	
+  glasafter  . . . . . . . . . .	L Near	 000000F0 _TEXT	
+  prepare  . . . . . . . . . . .	L Near	 00000105 _TEXT	
+  lastzam  . . . . . . . . . . .	L Near	 00000118 _TEXT	
+  final  . . . . . . . . . . . .	L Near	 0000011D _TEXT	
+  odin . . . . . . . . . . . . .	L Near	 0000012F _TEXT	
+  con  . . . . . . . . . . . . .	L Near	 0000013E _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+current  . . . . . . . . . . . .	DWord	 00000008 _DATA	
+glasn  . . . . . . . . . . . . .	Byte	 0000000C _DATA	
+i  . . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
+position . . . . . . . . . . . .	DWord	 00000004 _DATA	
+
+	   0 Warnings
+	   0 Errors
